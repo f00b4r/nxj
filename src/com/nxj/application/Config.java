@@ -1,13 +1,9 @@
 package com.nxj.application;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -15,114 +11,203 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author Felix
+ * Copyright 2012 Noblexity Advertising
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
  */
-public class Config implements Serializable {
+/**
+ * @author Petr Stuchl4n3k Stuchlik <stuchl4n3k@gmail.com>
+ * @author Milan Felix Sulc <rkfelix@gmail.com>
+ * 
+ * @nxj 0.1
+ * @version 1.0
+ */
+public class Config {
 
-    protected static final String DEFAULT_CONFIG_FILE = "noblej.config";
-    protected ResourceBundle application;
-    protected ResourceBundle defaults;
-    protected Properties properties;
+    /** Constant */
+    private static final int STORE_TYPE_NORMAL = 1;
+    private static final int STORE_TYPE_XML = 2;
+    private static final String DEFAULT_NAME = "Config";
+    /** Logger */
     private static final Logger logger = Logger.getLogger(Config.class.getName());
-    private transient PropertyChangeSupport changeSupport;
+    /** Fields */
+    protected Properties properties;
+    protected int storeType;
+    protected String name;
 
-    public Config(String appBundlePath, String defBundlePath) {
-        application = ResourceBundle.getBundle(appBundlePath);
-        defaults = ResourceBundle.getBundle(defBundlePath);
+    /**
+     * Private constructor
+     * @param name
+     * @param storeType
+     */
+    private Config(String name, int storeType) {
+        this.name = name;
+        this.storeType = storeType;
         properties = new Properties();
-        changeSupport = new PropertyChangeSupport(this);
-        startup();
     }
 
     /**
-     * Adds a property change listener width String key
-     * @param propertyName
-     * @param listener
+     * Private constructor
+     * @param filename
+     * @param name
+     * @param storeType
      */
-    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        changeSupport.addPropertyChangeListener(propertyName, listener);
+    private Config(String filename, String name, int storeType) {
+        this(name, storeType);
+        tryLoad(filename);
     }
 
     /**
-     * Adds a property change listener
-     * @param listener
+     * Private constructor
+     * @param filename
+     * @param name
+     * @param storeType
      */
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        changeSupport.addPropertyChangeListener(listener);
+    private Config(ResourceBundle bundle, String name, int storeType) {
+        this(name, storeType);
+        tryLoad(bundle);
     }
 
     /**
-     * Removes the property change listner by propertyName
-     * @param propertyName
-     * @param listener
+     * Factory
+     * @param filename
+     * @return
      */
-    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        changeSupport.removePropertyChangeListener(propertyName, listener);
+    public static Config getConfigBundle(String filename) {
+        return new Config(ResourceBundle.getBundle(filename), DEFAULT_NAME, STORE_TYPE_NORMAL);
     }
 
     /**
-     * Fire property change listener
-     * @param propertyName
-     * @param oldValue
-     * @param newValue
+     * Factory
+     * @param bundle
+     * @return
      */
-    public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-        if ((oldValue == null && newValue == null) || oldValue == newValue) {
-            return;
-        }
-        changeSupport.firePropertyChange(new PropertyChangeEvent(this, propertyName, oldValue, newValue));
+    public static Config getConfig(ResourceBundle bundle) {
+        return new Config(bundle, DEFAULT_NAME, STORE_TYPE_NORMAL);
     }
 
     /**
-     * Gets a application config value
+     * Factory
+     * @param filename
+     * @return
+     */
+    public static Config getConfig(String filename) {
+        return new Config(filename, DEFAULT_NAME, STORE_TYPE_NORMAL);
+    }
+
+    /**
+     * Factory
+     * @param filename
+     * @param name
+     * @return
+     */
+    public static Config getConfig(String filename, String name) {
+        return new Config(filename, name, STORE_TYPE_NORMAL);
+    }
+
+    /**
+     * Factory
+     * @param filename
+     * @param storeType
+     * @return
+     */
+    public static Config getConfig(String filename, int storeType) {
+        return new Config(filename, DEFAULT_NAME, storeType);
+    }
+
+    /**
+     * Factory
+     * @param filename
+     * @param name
+     * @param storeType
+     * @return
+     */
+    public Config getConfig(String filename, String name, int storeType) {
+        return new Config(filename, name, storeType);
+    }
+
+    /**
+     * Gets name
+     * @return
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets name
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Gets value
      * @param key
      * @return
      */
     public String getValue(String key) {
-        if (application.containsKey(key)) {
-            return application.getString(key);
-        }
-        logger.log(Level.CONFIG, "Key {0} not found in bundle", key);
-        return null;
+        return properties.getProperty(key);
     }
 
     /**
-     * Gets a custom setting value
+     * Gets value or defaultValue
      * @param key
-     * @return String or null
+     * @param defaultValue
+     * @return
      */
-    public String getProperty(String key) {
-        if (properties.containsKey(key)) {
-            return properties.getProperty(key);
-        }
-        logger.log(Level.CONFIG, "Key {0} not found in properties", key);
-        return null;
-    }
-
-    /**
-     * Gets a custom or default setting value
-     * @param key
-     * @return String
-     */
-    public String getProperty(String key, String defaultValue) {
+    public Object getValue(String key, String defaultValue) {
         return properties.getProperty(key, defaultValue);
     }
 
     /**
-     * Sets a Object o to String key
-     * @param String key
-     * @param Object o
+     * Sets key => value
+     * @param key
+     * @param value
      */
-    public void setProperty(String key, Object o) {
-        properties.put(key, o);
+    public void setValue(String key, Object value) {
+        properties.put(key, value);
     }
 
     /**
-     * Loads config from properly file
+     * Save settings
      * @param filename
      */
-    public void load(String filename) {
+    public void store(String filename) {
+        try {
+            try (FileOutputStream f = new FileOutputStream(filename)) {
+                switch (storeType) {
+                    case STORE_TYPE_XML:
+                        properties.storeToXML(f, getName());
+                        break;
+                    default:
+                        properties.store(f, getName());
+                        break;
+                }
+
+            }
+        } catch (IOException e) {
+            logger.log(Level.CONFIG, "Store fail: {0}", e.getMessage());
+        }
+    }
+
+    /**
+     * Load settings from file
+     * @param filename
+     */
+    private void tryLoad(String filename) {
         try {
             // Check if config file exists
             File configFile = new File(filename);
@@ -132,74 +217,19 @@ public class Config implements Serializable {
             }
 
         } catch (IOException e) {
-            logger.log(Level.CONFIG, "Load fail: {0}", e.getMessage());
+            logger.log(Level.CONFIG, "Load from file failed: {0}", e.getMessage());
         }
     }
 
     /**
-     * Process when application starts
-     */
-    private void startup() {
-        logger.logp(Level.CONFIG, "Config", "startup", "application config startup");
-        startup(new File(DEFAULT_CONFIG_FILE));
-    }
-
-    /**
-     * Process when application starts
-     * @param configFile
-     */
-    private void startup(String configFile) {
-        logger.logp(Level.CONFIG, "Config", "startup", "application config startup", new Object[]{configFile});
-        startup(new File(configFile));
-    }
-
-    /**
-     * Process when application starts
-     * @param configFile
-     */
-    private void startup(File configFile) {
-        logger.logp(Level.CONFIG, "Config", "startup", "application config startup", new Object[]{configFile});
-        if (configFile.exists()) {
-            load(configFile.getAbsolutePath());
-        } else {
-            loadDefaults(defaults);
-        }
-    }
-
-    /**
-     * Write config to properly file
+     * Load settings from bundle
      * @param filename
      */
-    public void store(String filename) {
-        try {
-            try (FileOutputStream f = new FileOutputStream(filename)) {
-                properties.store(f, "IPxUtils settings");
-            }
-        } catch (IOException e) {
-            logger.log(Level.CONFIG, "Store fail: {0}", e.getMessage());
-        }
-    }
-
-    /**
-     * Fill first defaults data
-     * @param resource
-     */
-    private void loadDefaults(ResourceBundle resource) {
-        logger.config("Loading defaults settings");
-        Enumeration<String> keys = resource.getKeys();
+    private void tryLoad(ResourceBundle bundle) {
+        Enumeration<String> keys = bundle.getKeys();
         while (keys.hasMoreElements()) {
             String key = keys.nextElement();
-            logger.log(Level.CONFIG, "Load config key: {0}", key);
-            properties.put(key, resource.getString(key));
-            firePropertyChange(key, null, resource.getString(key));
-        }
-    }
-
-    public void reload() {
-        Enumeration<Object> keys = properties.keys();
-        while (keys.hasMoreElements()) {
-            String key = (String) keys.nextElement();
-            firePropertyChange(key, null, properties.getProperty(key));
+            properties.put(key, bundle.getString(key));
         }
     }
 }
