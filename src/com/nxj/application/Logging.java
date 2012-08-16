@@ -190,7 +190,7 @@ public class Logging {
      * Flush all hang handlers on main logger
      */
     public void flush() {
-        Logger logger = prepareLogger("", DEFAULT_LEVEL);
+        Logger logger = prepareLogger("", Level.ALL);
         for (Handler handler : logger.getHandlers()) {
             // Flush and close handler, for save
             handler.flush();
