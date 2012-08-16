@@ -41,6 +41,7 @@ public class Application {
     protected List<Module> modules;
     private List<ShutdownListener> shutdownListeners;
     private static Application instance;
+    private Logging logging;
     private static final Logger logger = Logger.getLogger(Application.class.getName());
     private Reflections reflections;
     private AnnotationProcessor annotationProcessor;
@@ -55,6 +56,7 @@ public class Application {
         shutdownListeners = new ArrayList<>();
         reflections = new Reflections("");
         annotationProcessor = new AnnotationProcessor(this);
+        logging = new Logging();
     }
 
     /**
@@ -130,6 +132,14 @@ public class Application {
      */
     public Config getConfig() {
         return config;
+    }
+
+    /**
+     * Gets a Logging instance.
+     * @return 
+     */
+    public Logging getLogger() {
+        return logging;
     }
 
     /**
