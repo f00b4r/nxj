@@ -168,7 +168,7 @@ public class Config {
      * @param defaultValue
      * @return
      */
-    public Object getValue(String key, String defaultValue) {
+    public String getValue(String key, String defaultValue) {
         return properties.getProperty(key, defaultValue);
     }
 
