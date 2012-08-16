@@ -36,7 +36,7 @@ public class Utils {
      *
      * @return True on successful load.
      */
-    static boolean loadLib(String pathToLib) {
+    public static boolean loadLib(String pathToLib) {
         File libFile = new File(pathToLib);
         String libDir = libFile.getParent();
         String libName = libFile.getName();
