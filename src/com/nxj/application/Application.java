@@ -175,6 +175,7 @@ public class Application {
     }
 
     public void shutdown() {
+        // Invoke all shutdown listeners
         while (!shutdownListeners.isEmpty()) {
             shutdownListeners.remove(shutdownListeners.size() - 1).onShutdown();
         }
