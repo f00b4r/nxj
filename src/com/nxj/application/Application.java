@@ -4,6 +4,7 @@ import com.nxj.application.listeners.ShutdownListener;
 import com.nxj.annotation.AnnotationProcessor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Logger;
 import javassist.Modifier;
@@ -69,15 +70,34 @@ public class Application {
     }
 
     /**
+     * Bootstraps this Application. Bootstrapping initalizes loads all
+     * the Modules and instantiates the Controllers.
+     */
+    public void bootstrap() {
+        bootstrapModules();
+        bootstrapControllers();
+    }
+
+    /**
      * Bootstraps this Application. Bootstrapping initalizes Config, loads all
      * the Modules and instantiates the Controllers.
      *
      * @param configPath
      */
     public void bootstrap(String configPath) {
-        config = Config.getConfig(configPath);
-        bootstrapModules();
-        bootstrapControllers();
+        config = Config.getConfigBundle(configPath);
+        bootstrap();
+    }
+
+    /**
+     * Bootstraps this Application. Bootstrapping initalizes Config, loads all
+     * the Modules and instantiates the Controllers.
+     *
+     * @param bundle
+     */
+    public void bootstrap(ResourceBundle bundle) {
+        config = Config.getConfig(bundle);
+        bootstrap();
     }
 
     /**
