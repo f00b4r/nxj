@@ -33,6 +33,14 @@ import java.util.logging.SimpleFormatter;
 public class Logging {
 
     /**
+     * Default Level 
+     */
+    private static Level DEFAULT_LEVEL = Level.FINE;
+    /**
+     * Default file logger file
+     */
+    private static String DEFAULT_FILENAME = "./nxj.logger";
+    /**
      * Simple formater
      */
     private static SimpleFormatter formater;
@@ -42,7 +50,7 @@ public class Logging {
      * Factory, enable file logger
      */
     public void enableFileLogger() {
-        runFileLogger("", Level.FINE);
+        runFileLogger("", DEFAULT_LEVEL, DEFAULT_FILENAME);
     }
 
     /**
@@ -50,35 +58,59 @@ public class Logging {
      * @param loggingPackage 
      */
     public void enableFileLogger(String loggingPackage) {
-        runFileLogger(loggingPackage, Level.FINE);
+        runFileLogger(loggingPackage, DEFAULT_LEVEL, DEFAULT_FILENAME);
     }
 
     /**
      * Factory, enable file logger include logging package and level
+     * 
      * @param loggingPackage
      * @param level 
      */
     public void enableFileLogger(String loggingPackage, Level level) {
-        runFileLogger(loggingPackage, level);
+        runFileLogger(loggingPackage, level, DEFAULT_FILENAME);
+    }
+
+    /**
+     * Factory, enable file logger include logging package and filename
+     * 
+     * @param loggingPackage
+     * @param filename 
+     */
+    public void enableFileLogger(String loggingPackage, String filename) {
+        runFileLogger(loggingPackage, DEFAULT_LEVEL, filename);
+    }
+
+    /**
+     * Factory, enable file logger include logging package, level and filename
+     * 
+     * @param loggingPackage
+     * @param level
+     * @param filename 
+     */
+    public void enableFileLogger(String loggingPackage, Level level, String filename) {
+        runFileLogger(loggingPackage, level, filename);
     }
 
     /**
      * Factory, enable console logger
      */
     public void enableConsoleLogger() {
-        runConsoleLogger("", Level.FINE);
+        runConsoleLogger("", DEFAULT_LEVEL);
     }
 
     /**
      * Factory, enable console logger include logging package
+     * 
      * @param loggingPackage 
      */
     public void enableConsoleLogger(String loggingPackage) {
-        runConsoleLogger(loggingPackage, Level.FINE);
+        runConsoleLogger(loggingPackage, DEFAULT_LEVEL);
     }
 
     /**
      * Factory, enable console logger include logging package and level
+     * 
      * @param loggingPackage
      * @param level 
      */
@@ -88,9 +120,10 @@ public class Logging {
 
     /**
      * Returns SimpleFormater [lazy loading]
+     * 
      * @return 
      */
-    public static SimpleFormatter getFormater() {
+    private static SimpleFormatter getFormater() {
         if (formater == null) {
             formater = new SimpleFormatter();
         }
@@ -100,28 +133,32 @@ public class Logging {
 
     /**
      * Prepare main Logger for next usage
+     * 
      * @param loggingPackage
      * @param level
      * @return 
      */
     private Logger prepareLogger(String loggingPackage, Level level) {
-        Logger logger = Logger.getLogger("org.ipx.grabber");
+        Logger logger = Logger.getLogger(loggingPackage);
         logger.setLevel(level);
         return logger;
     }
 
     /**
-     * Run file logger 
+     * Run file logger
+     * 
      * @param loggingPackage
-     * @param level 
+     * @param level
+     * @param filename 
      */
-    private void runFileLogger(String loggingPackage, Level level) {
+    private void runFileLogger(String loggingPackage, Level level, String filename) {
         Logger logger = prepareLogger(loggingPackage, level);
 
         try {
-            FileHandler fh = new FileHandler(Application.getInstance().getConfig().getValue("logger.file", "./logger.log"), false);
+            FileHandler fh = new FileHandler(filename, false);
             fh.setLevel(level);
             fh.setEncoding("UTF-8");
+            fh.setFormatter(getFormater());
             logger.addHandler(fh);
         } catch (IOException | SecurityException ex) {
             logger.log(Level.SEVERE, "FileLogger error: {0}", ex.getMessage());
@@ -130,6 +167,7 @@ public class Logging {
 
     /**
      * Run console logger
+     * 
      * @param loggingPackage
      * @param level 
      */
@@ -138,8 +176,9 @@ public class Logging {
 
         try {
             ConsoleHandler ch = new ConsoleHandler();
-            ch.setLevel(Level.FINEST);
+            ch.setLevel(level);
             ch.setEncoding("UTF-8");
+            ch.setFormatter(getFormater());
             logger.addHandler(ch);
         } catch (IOException | SecurityException ex) {
             logger.log(Level.SEVERE, "ConsoleLogger error: {0}", ex.getMessage());
