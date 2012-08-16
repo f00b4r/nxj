@@ -187,7 +187,7 @@ public class Logging {
     }
 
     /**
-     * Flush all hanging handlers on main logger
+     * Flush all hang handlers on main logger
      */
     public void flush() {
         Logger logger = prepareLogger("", DEFAULT_LEVEL);
