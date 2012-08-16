@@ -39,6 +39,7 @@ public class LoggingTest {
         Logging logging = new Logging();
         logging.enableFileLogger("com.nxj", Level.ALL, "./muj.logger");
         invokeLogs();
+        logging.flush();
     }
 
     @Test
@@ -46,6 +47,7 @@ public class LoggingTest {
         Logging logging = new Logging();
         logging.enableConsoleLogger("com.nxj", Level.ALL);
         invokeLogs();
+        logging.flush();
     }
 
     private void invokeLogs() {

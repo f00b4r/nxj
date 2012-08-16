@@ -189,6 +189,11 @@ public class Application {
         while (!shutdownListeners.isEmpty()) {
             shutdownListeners.remove(shutdownListeners.size() - 1).onShutdown();
         }
+        
+        // Flush logger
+        logging.flush();
+        
+        // Hard exit
         System.exit(0);
     }
 

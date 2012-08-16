@@ -3,6 +3,7 @@ package com.nxj.application;
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -182,6 +183,18 @@ public class Logging {
             logger.addHandler(ch);
         } catch (IOException | SecurityException ex) {
             logger.log(Level.SEVERE, "ConsoleLogger error: {0}", ex.getMessage());
+        }
+    }
+
+    /**
+     * Flush all hanging handlers on main logger
+     */
+    public void flush() {
+        Logger logger = prepareLogger("", DEFAULT_LEVEL);
+        for (Handler handler : logger.getHandlers()) {
+            // Flush and close handler, for save
+            handler.flush();
+            handler.close();
         }
     }
 }
