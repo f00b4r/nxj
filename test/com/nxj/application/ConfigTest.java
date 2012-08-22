@@ -1,6 +1,5 @@
-package com.nxj;
+package com.nxj.application;
 
-import com.nxj.application.Config;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

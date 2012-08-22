@@ -1,6 +1,5 @@
-package com.nxj;
+package com.nxj.application;
 
-import com.nxj.application.Logging;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.After;
