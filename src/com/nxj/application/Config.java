@@ -12,42 +12,50 @@ import java.util.logging.Logger;
 
 /**
  * Copyright 2012 Noblexity Advertising
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *
  */
 /**
  * @author Petr Stuchl4n3k Stuchlik <stuchl4n3k@gmail.com>
  * @author Milan Felix Sulc <rkfelix@gmail.com>
- * 
+ *
  * @nxj 0.1
  * @version 1.0
  */
 public class Config {
 
-    /** Constant */
+    /**
+     * Constant
+     */
     private static final int STORE_TYPE_NORMAL = 1;
     private static final int STORE_TYPE_XML = 2;
     private static final String DEFAULT_NAME = "Config";
-    /** Logger */
+    /**
+     * Logger
+     */
     private static final Logger logger = Logger.getLogger(Config.class.getName());
-    /** Fields */
+    /**
+     * Fields
+     */
     protected Properties properties;
     protected int storeType;
     protected String name;
+    protected String filename;
 
     /**
      * Private constructor
+     *
      * @param name
      * @param storeType
      */
@@ -59,17 +67,20 @@ public class Config {
 
     /**
      * Private constructor
+     *
      * @param filename
      * @param name
      * @param storeType
      */
     private Config(String filename, String name, int storeType) {
         this(name, storeType);
+        this.filename = filename;
         tryLoad(filename);
     }
 
     /**
      * Private constructor
+     *
      * @param filename
      * @param name
      * @param storeType
@@ -81,24 +92,31 @@ public class Config {
 
     /**
      * Factory
+     *
      * @param filename
      * @return
      */
     public static Config getConfigBundle(String filename) {
-        return new Config(ResourceBundle.getBundle(filename), DEFAULT_NAME, STORE_TYPE_NORMAL);
+        Config config = new Config(ResourceBundle.getBundle(filename), DEFAULT_NAME, STORE_TYPE_NORMAL);
+        config.setFilename(filename);
+        return config;
     }
 
     /**
      * Factory
+     *
      * @param bundle
      * @return
      */
     public static Config getConfig(ResourceBundle bundle) {
-        return new Config(bundle, DEFAULT_NAME, STORE_TYPE_NORMAL);
+        Config config = new Config(bundle, DEFAULT_NAME, STORE_TYPE_NORMAL);
+        config.setFilename("./" + DEFAULT_NAME);
+        return config;
     }
 
     /**
      * Factory
+     *
      * @param filename
      * @return
      */
@@ -108,6 +126,7 @@ public class Config {
 
     /**
      * Factory
+     *
      * @param filename
      * @param name
      * @return
@@ -118,6 +137,7 @@ public class Config {
 
     /**
      * Factory
+     *
      * @param filename
      * @param storeType
      * @return
@@ -128,6 +148,7 @@ public class Config {
 
     /**
      * Factory
+     *
      * @param filename
      * @param name
      * @param storeType
@@ -139,6 +160,7 @@ public class Config {
 
     /**
      * Gets name
+     *
      * @return
      */
     public String getName() {
@@ -147,6 +169,7 @@ public class Config {
 
     /**
      * Sets name
+     *
      * @param name
      */
     public void setName(String name) {
@@ -154,7 +177,26 @@ public class Config {
     }
 
     /**
+     * Gets filename
+     *
+     * @return
+     */
+    public String getFilename() {
+        return filename;
+    }
+
+    /**
+     * Sets filename
+     *
+     * @param name
+     */
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    /**
      * Gets value
+     *
      * @param key
      * @return
      */
@@ -164,6 +206,7 @@ public class Config {
 
     /**
      * Gets value or defaultValue
+     *
      * @param key
      * @param defaultValue
      * @return
@@ -174,6 +217,7 @@ public class Config {
 
     /**
      * Sets key => value
+     *
      * @param key
      * @param value
      */
@@ -182,7 +226,15 @@ public class Config {
     }
 
     /**
+     * Save settings via filename
+     */
+    public void store() {
+        store(filename);
+    }
+
+    /**
      * Save settings
+     *
      * @param filename
      */
     public void store(String filename) {
@@ -205,6 +257,7 @@ public class Config {
 
     /**
      * Load settings from file
+     *
      * @param filename
      */
     private void tryLoad(String filename) {
@@ -223,6 +276,7 @@ public class Config {
 
     /**
      * Load settings from bundle
+     *
      * @param filename
      */
     private void tryLoad(ResourceBundle bundle) {

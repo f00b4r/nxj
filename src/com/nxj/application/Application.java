@@ -184,16 +184,22 @@ public class Application {
         return modules;
     }
 
+    /**
+     * Four stepts shutdown
+     */
     public void shutdown() {
-        // Invoke all shutdown listeners
+        // 1) Invoke all shutdown listeners
         while (!shutdownListeners.isEmpty()) {
             shutdownListeners.remove(shutdownListeners.size() - 1).onShutdown();
         }
         
-        // Flush logger
+        // 2) Flush logger
         logging.flush();
         
-        // Hard exit
+        // 3) Store config
+        config.store();
+        
+        // 4) Hard exit
         System.exit(0);
     }
 
