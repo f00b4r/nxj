@@ -10,31 +10,31 @@ import java.util.logging.SimpleFormatter;
 
 /**
  * Copyright 2012 Noblexity Advertising
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * 
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *
  */
 /**
  * @author Petr Stuchl4n3k Stuchlik <stuchl4n3k@gmail.com>
  * @author Milan Felix Sulc <rkfelix@gmail.com>
- * 
+ *
  * @nxj 0.1
  * @version 1.0
  */
 public class Logging {
 
     /**
-     * Default Level 
+     * Default Level
      */
     private static Level DEFAULT_LEVEL = Level.FINE;
     /**
@@ -46,7 +46,9 @@ public class Logging {
      */
     private static SimpleFormatter formater;
 
-    /** ****************************** FACTORIES ****************************** */
+    /**
+     * ****************************** FACTORIES ******************************
+     */
     /**
      * Factory, enable file logger
      */
@@ -56,7 +58,8 @@ public class Logging {
 
     /**
      * Factory, enable file logger include logging package
-     * @param loggingPackage 
+     *
+     * @param loggingPackage
      */
     public void enableFileLogger(String loggingPackage) {
         runFileLogger(loggingPackage, DEFAULT_LEVEL, DEFAULT_FILENAME);
@@ -64,9 +67,9 @@ public class Logging {
 
     /**
      * Factory, enable file logger include logging package and level
-     * 
+     *
      * @param loggingPackage
-     * @param level 
+     * @param level
      */
     public void enableFileLogger(String loggingPackage, Level level) {
         runFileLogger(loggingPackage, level, DEFAULT_FILENAME);
@@ -74,9 +77,9 @@ public class Logging {
 
     /**
      * Factory, enable file logger include logging package and filename
-     * 
+     *
      * @param loggingPackage
-     * @param filename 
+     * @param filename
      */
     public void enableFileLogger(String loggingPackage, String filename) {
         runFileLogger(loggingPackage, DEFAULT_LEVEL, filename);
@@ -84,10 +87,10 @@ public class Logging {
 
     /**
      * Factory, enable file logger include logging package, level and filename
-     * 
+     *
      * @param loggingPackage
      * @param level
-     * @param filename 
+     * @param filename
      */
     public void enableFileLogger(String loggingPackage, Level level, String filename) {
         runFileLogger(loggingPackage, level, filename);
@@ -102,8 +105,8 @@ public class Logging {
 
     /**
      * Factory, enable console logger include logging package
-     * 
-     * @param loggingPackage 
+     *
+     * @param loggingPackage
      */
     public void enableConsoleLogger(String loggingPackage) {
         runConsoleLogger(loggingPackage, DEFAULT_LEVEL);
@@ -111,9 +114,9 @@ public class Logging {
 
     /**
      * Factory, enable console logger include logging package and level
-     * 
+     *
      * @param loggingPackage
-     * @param level 
+     * @param level
      */
     public void enableConsoleLogger(String loggingPackage, Level level) {
         runConsoleLogger(loggingPackage, level);
@@ -121,8 +124,8 @@ public class Logging {
 
     /**
      * Returns SimpleFormater [lazy loading]
-     * 
-     * @return 
+     *
+     * @return
      */
     private static SimpleFormatter getFormater() {
         if (formater == null) {
@@ -134,10 +137,10 @@ public class Logging {
 
     /**
      * Prepare main Logger for next usage
-     * 
+     *
      * @param loggingPackage
      * @param level
-     * @return 
+     * @return
      */
     private Logger prepareLogger(String loggingPackage, Level level) {
         Logger logger = Logger.getLogger(loggingPackage);
@@ -147,10 +150,10 @@ public class Logging {
 
     /**
      * Run file logger
-     * 
+     *
      * @param loggingPackage
      * @param level
-     * @param filename 
+     * @param filename
      */
     private void runFileLogger(String loggingPackage, Level level, String filename) {
         Logger logger = prepareLogger(loggingPackage, level);
@@ -168,9 +171,9 @@ public class Logging {
 
     /**
      * Run console logger
-     * 
+     *
      * @param loggingPackage
-     * @param level 
+     * @param level
      */
     private void runConsoleLogger(String loggingPackage, Level level) {
         Logger logger = prepareLogger(loggingPackage, level);
