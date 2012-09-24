@@ -1,5 +1,7 @@
 package com.nxj.application.listeners;
 
+import java.util.EventListener;
+
 /**
  * Copyright 2012 Noblexity Advertising
  *
@@ -23,7 +25,5 @@ package com.nxj.application.listeners;
  * @nxj 0.1
  * @version 1.0
  */
-public interface ShutdownListener extends NxjListener {
-
-    public void onShutdown();
+public interface NxjListener extends EventListener {
 }

@@ -1,6 +1,8 @@
 package com.nxj.application;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
@@ -36,15 +38,26 @@ public class Logging {
     /**
      * Default Level
      */
-    private static Level DEFAULT_LEVEL = Level.FINE;
+    private final Level DEFAULT_LEVEL = Level.FINE;
     /**
      * Default file logger file
      */
-    private static String DEFAULT_FILENAME = "./nxj.logger";
+    private final String DEFAULT_FILENAME = "./nxj.logger";
     /**
      * Simple formater
      */
-    private static SimpleFormatter formater;
+    private SimpleFormatter formater;
+    /**
+     * Registred loggers
+     */
+    private ArrayList<Logger> list;
+
+    /**
+     * Constructor
+     */
+    public Logging() {
+        list = new ArrayList<>();
+    }
 
     /**
      * ****************************** FACTORIES ******************************
@@ -127,7 +140,7 @@ public class Logging {
      *
      * @return
      */
-    private static SimpleFormatter getFormater() {
+    private SimpleFormatter getFormater() {
         if (formater == null) {
             formater = new SimpleFormatter();
         }
@@ -145,6 +158,7 @@ public class Logging {
     private Logger prepareLogger(String loggingPackage, Level level) {
         Logger logger = Logger.getLogger(loggingPackage);
         logger.setLevel(level);
+        list.add(logger);
         return logger;
     }
 
@@ -160,10 +174,10 @@ public class Logging {
 
         try {
             FileHandler fh = new FileHandler(filename, false);
+            logger.addHandler(fh);
             fh.setLevel(level);
             fh.setEncoding("UTF-8");
             fh.setFormatter(getFormater());
-            logger.addHandler(fh);
         } catch (IOException | SecurityException ex) {
             logger.log(Level.SEVERE, "FileLogger error: {0}", ex.getMessage());
         }
@@ -191,13 +205,17 @@ public class Logging {
 
     /**
      * Flush all hang handlers on main logger
+     *
+     * @param loggingPackage
      */
     public void flush() {
-        Logger logger = prepareLogger("", Level.ALL);
-        for (Handler handler : logger.getHandlers()) {
-            // Flush and close handler, for save
-            handler.flush();
-            handler.close();
+        for (Iterator<Logger> it = list.iterator(); it.hasNext();) {
+            Logger logger = it.next();
+            for (Handler handler : logger.getHandlers()) {
+                // Flush and close handler, for save
+                handler.flush();
+                handler.close();
+            }
         }
     }
 }

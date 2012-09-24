@@ -5,6 +5,7 @@ import java.awt.HeadlessException;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  * Copyright 2012 Noblexity Advertising
@@ -35,7 +36,6 @@ public class NFrame extends JFrame {
      * Override default close operation
      */
     protected static final int CLOSE_OPERATION = EXIT_ON_CLOSE;
-    
     /**
      * Constant for future shutdown
      */
@@ -126,13 +126,13 @@ public class NFrame extends JFrame {
     /**
      * Prepared close operation
      */
-    protected void close() {
+    private void close() {
         // Call handler onClose()
         onClose();
-        
+
         // Default close operation
         setDefaultCloseOperation(CLOSE_OPERATION);
-        
+
         // Shut application shutdown?
         if (SHUTDOWN) {
             shutdown();
@@ -166,10 +166,50 @@ public class NFrame extends JFrame {
     }
 
     /**
-     * Custom NFrame close method,
-     * for saving, storing, etc..
+     * Custom NFrame close method, for saving, storing, etc..
      */
     protected void onClose() {
         // nothing
+    }
+
+    /**
+     * ************************** MESSAGE DIALOGS **************************
+     */
+    /**
+     * Show message dialog
+     *
+     * @param message
+     * @param title
+     * @param type
+     */
+    protected void showMessageDialog(String message, String title, int type) {
+        JOptionPane.showMessageDialog(this, message, title, type);
+    }
+
+    /**
+     * Swow error message dialog
+     *
+     * @param message
+     */
+    protected void showErrorMessageDialog(String message) {
+        this.showMessageDialog(message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Swow info message dialog
+     *
+     * @param message
+     */
+    protected void showInfoMessageDialog(String message) {
+        this.showMessageDialog(message, "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    /**
+     * Show ok message dialog
+     *
+     * @param message
+     */
+    protected void showOkMessageDialog(String message) {
+        this.showMessageDialog(message, "OK", JOptionPane.OK_OPTION);
     }
 }

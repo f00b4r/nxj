@@ -1,5 +1,6 @@
 package com.nxj.application;
 
+import com.nxj.application.listeners.BootstrapListener;
 import com.nxj.application.listeners.ShutdownListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,15 +28,16 @@ import java.util.logging.Logger;
  * @nxj 0.1
  * @version 1.0
  */
-public abstract class Controller implements ShutdownListener {
+public abstract class Controller implements ShutdownListener, BootstrapListener {
 
     private Application context;
     private static final Logger logger = Logger.getLogger(Application.class.getName());
 
     public Controller() {
-        logger.log(Level.INFO, getClass() + " instantiated");
+        logger.log(Level.INFO, "{0} instantiated", getClass());
     }
 
+    @Override
     public void onBootstrap() {
     }
 

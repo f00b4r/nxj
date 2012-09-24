@@ -23,7 +23,7 @@ package com.nxj.application.listeners;
  * @nxj 0.1
  * @version 1.0
  */
-public interface ShutdownListener extends NxjListener {
+public interface BootstrapListener extends NxjListener {
 
-    public void onShutdown();
+    public void onBootstrap();
 }

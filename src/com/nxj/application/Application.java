@@ -1,13 +1,17 @@
 package com.nxj.application;
 
 import com.nxj.annotation.AnnotationProcessor;
+import com.nxj.application.listeners.BootstrapListener;
+import com.nxj.application.listeners.NxjListener;
 import com.nxj.application.listeners.ShutdownListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javassist.Modifier;
+import javax.swing.event.EventListenerList;
 import org.reflections.Reflections;
 
 /**
@@ -39,7 +43,7 @@ public class Application {
     protected List<Controller> controllers;
     protected List<View> views;
     protected List<Module> modules;
-    private List<ShutdownListener> shutdownListeners;
+    private EventListenerList listeners;
     private static Application instance;
     private Logging logging;
     private static final Logger logger = Logger.getLogger(Application.class.getName());
@@ -53,7 +57,7 @@ public class Application {
         controllers = new ArrayList<>();
         views = new ArrayList<>();
         modules = new ArrayList<>();
-        shutdownListeners = new ArrayList<>();
+        listeners = new EventListenerList();
         reflections = new Reflections("");
         annotationProcessor = new AnnotationProcessor(this);
         logging = new Logging();
@@ -76,6 +80,10 @@ public class Application {
      * Modules and instantiates the Controllers.
      */
     public void bootstrap() {
+        // Start logging NXJ system
+        getLogger().enableFileLogger("com", Level.ALL, "./nxj.log");
+
+        // Load modules and controllers
         bootstrapModules();
         bootstrapControllers();
     }
@@ -87,7 +95,7 @@ public class Application {
      * @param configPath
      */
     public void bootstrap(String configPath) {
-        config = Config.getConfigBundle(configPath);
+        config = Config.getConfig(configPath);
         bootstrap();
     }
 
@@ -190,9 +198,7 @@ public class Application {
      */
     public void shutdown() {
         // 1) Invoke all shutdown listeners
-        while (!shutdownListeners.isEmpty()) {
-            shutdownListeners.remove(shutdownListeners.size() - 1).onShutdown();
-        }
+        dispatchShutdownListeners();
 
         // 2) Flush logger
         logging.flush();
@@ -204,16 +210,6 @@ public class Application {
 
         // 4) Hard exit
         System.exit(0);
-    }
-
-    public void addShutdownListener(ShutdownListener listener) {
-        if (!shutdownListeners.contains(listener)) {
-            shutdownListeners.add(listener);
-        }
-    }
-
-    public void removeShutdownListener(ShutdownListener listener) {
-        shutdownListeners.remove(listener);
     }
 
     /**
@@ -236,13 +232,11 @@ public class Application {
         // After the controllers have been initialized, process the annotaions.
         annotationProcessor.processAnnotations(controllers);
 
-        // Register all controllers as shutdownListeners.
-        shutdownListeners.addAll(controllers);
+        // Register all controllers to all application listeners.
+        attachListeners(controllers);
 
         // Finally bootstrap all controllers.
-        for (Controller ctrl : controllers) {
-            ctrl.onBootstrap();
-        }
+        dispatchBootstrapListeners();
     }
 
     /**
@@ -255,13 +249,59 @@ public class Application {
             // Instantiate only non-abstract Module-subclasses.
             if (!Modifier.isAbstract(cls.getModifiers())) {
                 try {
+                    // Create new instance
                     Module mod = cls.newInstance();
+                    // Inject context
                     mod.setContext(this);
+                    // Add to modules
                     modules.add(mod);
                 } catch (InstantiationException | IllegalAccessException ex) {
                     ex.printStackTrace();
                 }
             }
+        }
+    }
+
+    /**
+     * Add listener to t listeners group.
+     *
+     * @param t
+     * @param listener
+     */
+    public void addListener(Class t, NxjListener listener) {
+        listeners.add(t, listener);
+    }
+
+    /**
+     * Register all application listeners to controllers. E.q. onBootstrap,
+     * onShutdown, etc.
+     *
+     * @param controllers
+     */
+    private void attachListeners(List<Controller> controllers) {
+        for (Controller c : controllers) {
+            // Register onBootstrap()
+            addListener(BootstrapListener.class, c);
+            // Register onShutdown()
+            addListener(ShutdownListener.class, c);
+        }
+    }
+
+    /**
+     * Dispatch bootstrap listeners. Call onBootstrap()
+     */
+    public void dispatchBootstrapListeners() {
+        for (BootstrapListener l : listeners.getListeners(BootstrapListener.class)) {
+            l.onBootstrap();
+        }
+    }
+
+    /**
+     * Dispatch shutdown listeners. Call onShutdown()
+     */
+    public void dispatchShutdownListeners() {
+        for (ShutdownListener l : listeners.getListeners(ShutdownListener.class)) {
+            l.onShutdown();
         }
     }
 }
