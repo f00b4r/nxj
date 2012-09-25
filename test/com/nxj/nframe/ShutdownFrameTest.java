@@ -9,6 +9,7 @@ import com.nxj.application.NFrame;
 public class ShutdownFrameTest extends NFrame {
 
         
+    @Override
     protected void init() {
         SHUTDOWN = true;
         initComponents();

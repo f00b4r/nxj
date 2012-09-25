@@ -8,6 +8,7 @@ import com.nxj.application.NFrame;
  */
 public class DefaultFrameTest extends NFrame {
 
+    @Override
     protected void init() {
         initComponents();
     }

@@ -9,6 +9,7 @@ import com.nxj.application.NFrame;
 public class OnCloseFrameTest extends NFrame {
 
         
+    @Override
     protected void init() {
         initComponents();
     }

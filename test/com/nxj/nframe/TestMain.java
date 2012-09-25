@@ -14,8 +14,8 @@ public class TestMain implements ShutdownListener {
         TestMain main = new TestMain();
 
         //main.defaultFrameTest();
-        //main.shutdownFrameTest();
-        main.onCloseFrameTest();
+        main.shutdownFrameTest();
+        //main.onCloseFrameTest();
 
     }
 
@@ -40,7 +40,7 @@ public class TestMain implements ShutdownListener {
         Application app = Application.getInstance();
 
         // Register shutdownlistener
-        app.addShutdownListener(this);
+        app.addListener(ShutdownListener.class, this);
 
         // Show frame
         java.awt.EventQueue.invokeLater(new Runnable() {
